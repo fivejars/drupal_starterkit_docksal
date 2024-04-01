@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+
+## Build FiveJars StarterKit distribution project.
+##
+## See https://github.com/fivejars/drupal_starterkit_project
+## Note: This command will remove all files in project, use with caution!
+##
+## Usage: fin build_project
+
+# Abort if anything fails
+set -e
+
+# Include console colors
+CURRENT_DIR="$(dirname "$0")"
+source "$CURRENT_DIR/includes/colors.sh"
+
+#-------------------------- Settings --------------------------------
+
+PROJECT_NAME="starterkit-project"
+IGNORE_REQUIRED="^.$ ^..$ .docksal"
+COMPOSER_PROJECT="${PROJECT_ROOT}/${PROJECT_NAME}"
+DOCROOT_PATH="${PROJECT_ROOT}/${DOCROOT:-docroot}"
+DISTRIBUTION_PATH="${DOCROOT:-docroot}/profiles/contrib/starterkit"
+
+#-------------------------- END: Settings --------------------------------
+
+#-------------------------- Functions --------------------------------
+
+# Cleanup project.
+cleanup ()
+{
+  cd "$PROJECT_ROOT"
+
+  # Build command based on settings.
+  IGNORE="$IGNORE_REQUIRED $IGNORE_CUSTOM"
+  CMD='ls -a | grep -v'
+  arr=(`echo ${IGNORE}`);
+
+  echo "Ignore ${#arr[*]} directories during cleanup:"
+  for ix in ${!arr[*]}
+  do
+    CMD="$CMD -e '${arr[$ix]}'"
+    printf "   %s\n" "- ${arr[$ix]}"
+  done
+
+  # Here we will get something like this:
+  # ls -a | grep -v -e ".docksal" -e ".idea" -e "^.$" -e "^..$" | xargs rm -rf
+  RM_CMD="$CMD | xargs rm -rf"
+  if [[ -d "$DOCROOT_PATH" ]]; then
+    fin exec "chmod 777 -R $DOCROOT"
+  fi
+  # Execute command.
+  fin exec "$RM_CMD"
+}
+
+# Checkout composer project.
+prepare_composer_project ()
+{
+  cd "$PROJECT_ROOT"
+  fin exec "git clone $PROJECT_GIT_REMOTE $PROJECT_NAME"
+  cd "$COMPOSER_PROJECT"
+  fin exec "git checkout $PROJECT_VERSION"
+  rm -rf ".git"
+}
+
+# Init GIT repository in project.
+prepare_distribution ()
+{
+  cd "$COMPOSER_PROJECT"
+  mkdir -p "$DISTRIBUTION_PATH" && cd "$DISTRIBUTION_PATH"
+  fin exec "git clone $DISTRIBUTION_GIT_REMOTE ."
+  fin exec "git checkout $DISTRIBUTION_VERSION"
+}
+
+# Install composer project.
+install_project ()
+{
+  cd "$COMPOSER_PROJECT"
+  fin exec "composer config repositories.distribution_dev path $DISTRIBUTION_PATH"
+  fin composer install
+  # Move all files from COMPOSER_PROJECT to root directory.
+  mv * .[^.]* ..
+  # Remove empty directory.
+  rm -rf "$COMPOSER_PROJECT"
+}
+
+#-------------------------- END: Functions ---------------------------
+
+#-------------------------- Execution --------------------------------
+if [[ ${DOCKER_RUNNING} == "true" ]]; then
+  echo-green-bg " Step 1: Recreating services. "
+  fin reset -f
+else
+  echo-green-bg " Step 1: Creating services. "
+  fin up
+fi
+
+echo-green-bg " Step 2: Cleanup."
+time cleanup
+
+echo-green-bg " Step 3: Prepare composer project."
+time prepare_composer_project
+
+echo-green-bg " Step 4: Prepare distribution."
+time prepare_distribution
+
+echo-green-bg " Step 5: Install project using composer and attach distribution repository."
+time install_project
+
+echo -en "${green_bg} DONE! ${NC} "
+echo "Run 'fin init' to install FiveJars StarterKit distribution website."
+
+#-------------------------- END: Execution ----------------------------------
