@@ -11,6 +11,7 @@ services:
       - XDEBUG_MODE
       - SIMPLETEST_BASE_URL=http://${VIRTUAL_HOST}/
       - SITE_ENVIRONMENT
+      - MYSQL_PORT
   mail:
     extends:
       file: ${HOME}/.docksal/stacks/services.yml
