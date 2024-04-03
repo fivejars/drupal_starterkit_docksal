@@ -36,3 +36,8 @@ $settings['trusted_host_patterns'] = [
   '^.+\.docksal$',
   '^(.*?).fivejars\.com$',
 ];
+
+/**
+ * Configuration overrides for Config split.
+ */
+$config["config_split.config_split.dev"]["status"] = TRUE;
