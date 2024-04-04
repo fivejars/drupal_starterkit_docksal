@@ -77,7 +77,7 @@ install_project ()
 {
   cd "$COMPOSER_PROJECT"
   fin exec "composer config repositories.distribution_dev path $DISTRIBUTION_PATH"
-  fin composer install
+  fin composer install -n
   # Move all files from COMPOSER_PROJECT to root directory.
   mv * .[^.]* ..
   # Remove empty directory.
