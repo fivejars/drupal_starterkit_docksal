@@ -91,6 +91,14 @@ setup_project ()
 	touch .env
 }
 
+# Enable theme
+enable_theme ()
+{
+	echo-green "Install and enable theme"
+	fin drush then drupal_starterkit_theme -y
+	fin drush config-set system.theme default drupal_starterkit_theme -y
+}
+
 # Fix file/folder permissions
 fix_permissions ()
 {
@@ -128,6 +136,7 @@ time install_dependencies
 
 echo -e "${green_bg} Step 4 ${NC}${green} Setting up project...${NC}"
 time setup_project
+time enable_theme
 
 if is_windows; then
 	echo-green "Add ${VIRTUAL_HOST} to your hosts file (/etc/hosts), e.g.:"
