@@ -2,6 +2,8 @@ This is a Docksal-based for the [FiveJars StarterKit](https://github.com/fivejar
 
 [Docksal](https://docksal.io/) is used as a local development environment.
 
+Sponsored and developed by [Five Jars](https://www.drupal.org/five-jars).
+
 # Get Started
 
 You need to install Docksal on your local machine according to [Docksal setup](http://docksal.readthedocs.io/en/master/getting-started/env-setup/) instructions.
@@ -53,6 +55,10 @@ The "Killed" message during command run usually means that you need to increase
 memory limits in your Docksal. For macOS or Windows overall memory volume
 available for Docker is limited by the virtual machine or Docker Desktop
 settings.
+
+#### Build FiveJars StarterKit Demo project
+It is built in the same way as the distribution project, but requires a different example file in the `Add your custom settings` step.
+If you need to build the `FiveJars StarterKit Demo project`, please use `example-demo.docksal-local.env`.
 
 #### Install FiveJars StarterKit website
 

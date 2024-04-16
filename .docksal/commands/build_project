@@ -60,13 +60,20 @@ prepare_composer_project ()
   fin exec "git clone $PROJECT_GIT_REMOTE $PROJECT_NAME"
   cd "$COMPOSER_PROJECT"
   fin exec "git checkout $PROJECT_VERSION"
-  rm -rf ".git"
+
+  # Remove git if we build pure distribution.
+  if [ -z $DB_DATA_VOLUME_NAME ]; then
+    echo "Cleanup git integration from the distribution project"
+    rm -rf ".git"
+  fi
 }
 
 # Init GIT repository in project.
 prepare_distribution ()
 {
   cd "$COMPOSER_PROJECT"
+  echo "Add distribution as local repository"
+  fin exec "composer config repositories.distribution_dev path $DISTRIBUTION_PATH"
   mkdir -p "$DISTRIBUTION_PATH" && cd "$DISTRIBUTION_PATH"
   fin exec "git clone $DISTRIBUTION_GIT_REMOTE ."
   fin exec "git checkout $DISTRIBUTION_VERSION"
@@ -76,7 +83,6 @@ prepare_distribution ()
 install_project ()
 {
   cd "$COMPOSER_PROJECT"
-  fin exec "composer config repositories.distribution_dev path $DISTRIBUTION_PATH"
   fin composer install -n
   # Move all files from COMPOSER_PROJECT to root directory.
   mv * .[^.]* ..
@@ -101,10 +107,14 @@ time cleanup
 echo-green-bg " Step 3: Prepare composer project."
 time prepare_composer_project
 
-echo-green-bg " Step 4: Prepare distribution."
-time prepare_distribution
+echo-green-bg " Step 4: Prepare distribution and attach distribution repository."
+if [ -z $DB_DATA_VOLUME_NAME ]; then
+  time prepare_distribution
+else
+  echo-yellow "Skipped."
+fi
 
-echo-green-bg " Step 5: Install project using composer and attach distribution repository."
+echo-green-bg " Step 5: Install project using composer."
 time install_project
 
 echo -en "${green_bg} DONE! ${NC} "
