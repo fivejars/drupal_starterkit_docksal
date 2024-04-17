@@ -35,6 +35,7 @@ $settings['trusted_host_patterns'] = [
   '^.+\.docksal.site$',
   '^.+\.docksal$',
   '^(.*?).fivejars\.com$',
+  '^(.*?).fivejars\.net$',
 ];
 
 /**
