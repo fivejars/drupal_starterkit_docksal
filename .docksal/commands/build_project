@@ -62,7 +62,7 @@ prepare_composer_project ()
   fin exec "git checkout $PROJECT_VERSION"
 
   # Remove git if we build pure distribution.
-  if [ -z $DB_DATA_VOLUME_NAME ]; then
+  if [ -z $DB_DATA_VOLUME ]; then
     echo "Cleanup git integration from the distribution project"
     rm -rf ".git"
   fi
@@ -108,7 +108,7 @@ echo-green-bg " Step 3: Prepare composer project."
 time prepare_composer_project
 
 echo-green-bg " Step 4: Prepare distribution and attach distribution repository."
-if [ -z $DB_DATA_VOLUME_NAME ]; then
+if [ -z $DB_DATA_VOLUME ]; then
   time prepare_distribution
 else
   echo-yellow "Skipped."

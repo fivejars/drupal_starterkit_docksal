@@ -167,7 +167,7 @@ echo -e "${green_bg} Step 3 ${NC}${green} Installing project dependencies...${NC
 time install_dependencies
 
 echo -e "${green_bg} Step 4 ${NC}${green} Setting up project...${NC}"
-if [ -z $DB_DATA_VOLUME_NAME ]; then
+if [ -z $DB_DATA_VOLUME ]; then
   time setup_project
   time setup_theme
 else
