@@ -25,12 +25,12 @@ SITEDIR_PATH="${DOCROOT_PATH}/sites/${SITE_DIRECTORY}"
 #-------------------------- Helper functions --------------------------------
 is_windows ()
 {
-	local res=$(uname | grep 'CYGWIN_NT')
-	if [[ "$res" != "" ]]; then
-		return 0
-	else
-		return 1
-	fi
+  local res=$(uname | grep 'CYGWIN_NT')
+  if [[ "$res" != "" ]]; then
+    return 0
+  else
+    return 1
+  fi
 }
 
 # Copy a settings file.
@@ -45,9 +45,9 @@ copy_settings_file()
   if [[ ! -f $dest ]]; then
     echo "Copying ${dest}..."
     cp $source $dest
-	else
-		echo-yellow "${dest} already in place."
-	fi
+  else
+    echo-yellow "${dest} already in place."
+  fi
 }
 
 #-------------------------- END: Helper functions --------------------------------
@@ -58,13 +58,10 @@ copy_settings_file()
 init_settings ()
 {
   if [ -f ${SITEDIR_PATH}/settings.php ]; then
-	  rm ${SITEDIR_PATH}/settings.php
+    copy_settings_file "${PROJECT_ROOT}/.docksal/files/default.settings.php" "${SITEDIR_PATH}/settings.php"
   fi
-  copy_settings_file "${PROJECT_ROOT}/.docksal/files/default.settings.php" "${SITEDIR_PATH}/settings.php"
-
 
   if [[ "$SITE_ENVIRONMENT" == "dev" ]]; then
-
     if [ -f ${SITEDIR_PATH}/settings.local.php ]; then
       rm ${SITEDIR_PATH}/settings.local.php
     fi
@@ -75,20 +72,17 @@ init_settings ()
 # Install project dependencies
 install_dependencies ()
 {
-	echo-green "Install project dependencies"
-	cd $PROJECT_ROOT
-	time fin composer install --no-interaction
-
-	touch .env
+  echo-green "Install project dependencies"
+  cd $PROJECT_ROOT
+  time fin composer install --no-interaction
+  touch .env
 }
 
 # Setup project dependencies
 setup_project ()
 {
-	echo-green "Install site from distribution"
-	fin drush si --account-name=admin --account-pass=$ADMIN_PASSWORD -y
-
-	touch .env
+  echo-green "Install site from distribution"
+  fin drush si --account-name=admin --account-pass=$ADMIN_PASSWORD -y
 }
 
 # Setup theme
@@ -106,14 +100,14 @@ deploy()
 {
   echo "Deploying..."
   cd $DOCROOT_PATH
-	fin drush deploy -y -l https://$VIRTUAL_HOST
+  fin drush deploy -y -l https://$VIRTUAL_HOST
 }
 
 # Fix file/folder permissions
 fix_permissions ()
 {
-	echo-green "Making site directory writable..."
-	chmod 755 "$SITEDIR_PATH"
+  echo-green "Making site directory writable..."
+  chmod 755 "$SITEDIR_PATH"
 }
 
 # Import SQL dump
@@ -143,8 +137,8 @@ reset_admin_password ()
 #-------------------------- Execution --------------------------------
 
 if [[ "$PROJECT_ROOT" == "" ]]; then
-	echo-red "\$PROJECT_ROOT is not set"
-	exit 1
+  echo-red "\$PROJECT_ROOT is not set"
+  exit 1
 fi
 
 # Project initialization steps
@@ -153,11 +147,11 @@ fix_permissions
 init_settings
 
 if [[ $DOCKER_RUNNING == "true" ]]; then
-	echo -e "${green_bg} Step 2 ${NC}${green} Recreating services...${NC}"
-	fin reset -f
+  echo -e "${green_bg} Step 2 ${NC}${green} Recreating services...${NC}"
+  fin reset -f
 else
-	echo -e "${green_bg} Step 2 ${NC}${green} Creating services...${NC}"
-	fin up
+  echo -e "${green_bg} Step 2 ${NC}${green} Creating services...${NC}"
+  fin up
 fi
 
 echo "Waiting 10s for MySQL to initialize...";
@@ -182,9 +176,9 @@ else
 fi
 
 if is_windows; then
-	echo-green "Add ${VIRTUAL_HOST} to your hosts file (/etc/hosts), e.g.:"
-	echo-green "192.168.64.100 ${VIRTUAL_HOST}"
-	echo
+  echo-green "Add ${VIRTUAL_HOST} to your hosts file (/etc/hosts), e.g.:"
+  echo-green "192.168.64.100 ${VIRTUAL_HOST}"
+  echo
 fi
 
 echo -en "${green_bg} DONE! ${NC} "
