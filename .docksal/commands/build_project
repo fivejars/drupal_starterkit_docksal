@@ -57,9 +57,8 @@ cleanup ()
 prepare_composer_project ()
 {
   cd "$PROJECT_ROOT"
-  fin exec "git clone $PROJECT_GIT_REMOTE $PROJECT_NAME"
+  fin exec "git clone -b $PROJECT_VERSION $PROJECT_GIT_REMOTE $PROJECT_NAME"
   cd "$COMPOSER_PROJECT"
-  fin exec "git checkout $PROJECT_VERSION"
 
   # Remove git if we build pure distribution.
   if [ -z $DB_DATA_VOLUME ]; then
@@ -75,8 +74,7 @@ prepare_distribution ()
   echo "Add distribution as local repository"
   fin exec "composer config repositories.distribution_dev path $DISTRIBUTION_PATH"
   mkdir -p "$DISTRIBUTION_PATH" && cd "$DISTRIBUTION_PATH"
-  fin exec "git clone $DISTRIBUTION_GIT_REMOTE ."
-  fin exec "git checkout $DISTRIBUTION_VERSION"
+  fin exec "git clone -b $DISTRIBUTION_VERSION $DISTRIBUTION_GIT_REMOTE ."
 }
 
 # Install composer project.
