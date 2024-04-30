@@ -42,3 +42,11 @@ $settings['trusted_host_patterns'] = [
  * Configuration overrides for Config split.
  */
 $config["config_split.config_split.dev"]["status"] = TRUE;
+
+/**
+ * Configuration overrides for OpenAI integration.
+ */
+if (getenv('OPENAI_API_KEY')) {
+  $config["openai.settings"]["api_key"] = getenv('OPENAI_API_KEY');
+  $config["metatag_ai.settings"]["metatag_ai"]["metatagai_token"] = getenv('OPENAI_API_KEY');
+}
