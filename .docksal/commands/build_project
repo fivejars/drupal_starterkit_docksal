@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-## Build FiveJars StarterKit distribution project.
+## Build Booster distribution project.
 ##
-## See https://github.com/fivejars/drupal_starterkit_project
+## See https://github.com/fivejars/booster_drupal_project
 ## Note: This command will remove all files in project, use with caution!
 ##
 ## Usage: fin build_project
@@ -16,11 +16,11 @@ source "$CURRENT_DIR/includes/colors.sh"
 
 #-------------------------- Settings --------------------------------
 
-PROJECT_NAME="starterkit-project"
+PROJECT_NAME="booster-project"
 IGNORE_REQUIRED="^.$ ^..$ .docksal"
 COMPOSER_PROJECT="${PROJECT_ROOT}/${PROJECT_NAME}"
 DOCROOT_PATH="${PROJECT_ROOT}/${DOCROOT:-docroot}"
-DISTRIBUTION_PATH="${DOCROOT:-docroot}/profiles/contrib/starterkit"
+DISTRIBUTION_PATH="${DOCROOT:-docroot}/profiles/contrib/booster"
 
 #-------------------------- END: Settings --------------------------------
 
@@ -116,6 +116,6 @@ echo-green-bg " Step 5: Install project using composer."
 time install_project
 
 echo -en "${green_bg} DONE! ${NC} "
-echo "Run 'fin init' to install FiveJars StarterKit distribution website."
+echo "Run 'fin init' to install Booster distribution website."
 
 #-------------------------- END: Execution ----------------------------------
